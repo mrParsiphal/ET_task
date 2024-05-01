@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" href="{% static 'cpu_util/css/index.css' %}">
+    <title></title>
+</head>
+<body>
+    <div class="table_background">
+        <h4 class="info" id="max">Максимальное значение: </h4>
+        <h4 class="info" id="min">Минимальное значение: </h4>
+        <h4 class="info" id="average">Среднее значение: </h4>
+        <table border="2">
+           <tr>
+               <th id="number">№</th>
+               <th id="ip">IP адресс</th>
+               <th id="util">Утилизация ЦПУ</th>
+               <th id="date">Дата</th>
+           </tr>
+            {% for number in length %}
+                <tr>
+                    <td id="line_{{ number }}">-</td>
+                    <td id="ip_{{ number }}">-</td>
+                    <td id="cpu_util_{{ number }}">-</td>
+                    <td id="date_{{ number }}">-</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+<script>
+
+    var sort_direction = false;
+    var data = undefined;
+    const number = document.getElementById("number");
+    const ip = document.getElementById("ip");
+    const util = document.getElementById("util");
+    const date = document.getElementById("date");
+
+
+    window.onload = async function () {
+        Load_data();
+        setInterval(() => {
+            Load_data();
+        }, 10000);
+    };
+
+
+    async function Load_data() {
+		let response = await fetch("/cpu_export", {
+			method: 'GET',
+		});
+		cpu_input = await response.json();
+        data = cpu_input.cpu_util
+        Change_table(data);
+	}
+
+
+    function Change_table(data) {
+        let min_arg = 100;
+        let max_arg = 0;
+        let sum_arg = 0;
+        for (let line = 0; line < Object.keys(data).length; line++) {
+            if (min_arg > data[line][1]) {
+                min_arg = data[line][1]
+            };
+            if (max_arg < data[line][1]) {
+                max_arg = data[line][1]
+            };
+            sum_arg += data[line][1];
+            document.getElementById("line_" + line).textContent = line + 1;
+            document.getElementById("ip_" + line).textContent = data[line][0];
+            document.getElementById("cpu_util_" + line).textContent = data[line][1] + '%';
+            document.getElementById("date_" + line).textContent = data[line][2];
+        };
+        document.getElementById("average").textContent = 'Среднее значение: ' + Math.round(
+            sum_arg / Object.keys(data).length);
+        document.getElementById("max").textContent = 'Максимальное значение: ' + max_arg;
+        document.getElementById("min").textContent = 'Минимальное значение: ' + min_arg;
+    }
+
+</script>
+</html>

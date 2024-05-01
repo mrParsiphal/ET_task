@@ -1,0 +1,31 @@
+body {
+    background-color: #E35E00;
+}
+
+.table_background {
+    margin-top: 20px;
+    margin-left: calc((100% - 420px)/2);
+    padding: 20px;
+    width: 420px;
+    background-color: #E37400;
+    border-radius: 25px;
+}
+
+.cpu_utilization_line {
+    display: flex;
+    height: 25px;
+    margin-top: 2px;
+    padding-left: 8px;
+    padding-top: 1px;
+    background-color: wheat;
+}
+
+.line_text {
+    margin-top: 0;
+    padding-top: 3px;
+}
+
+.info {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
